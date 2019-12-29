@@ -32,25 +32,30 @@
 			</view>
 			<text class="yticon icon-you"></text>
 		</view>
-		<view>
-			<goods-list :goodsList="goodsList"></goods-list>
-		</view>
+
+		<goods-list :goodsList="goodsList"></goods-list>
+
+		<!-- 下拉加载跟多 -->
+		<load-more :moreLoadText="moreLoadText"></load-more>
 	</view>
 </template>
 
 <script>
 import goodsList from '../../components/common/goods-list.vue';
-import headSwiper from "../../components/index/head-swiper.vue"
+import headSwiper from '../../components/index/head-swiper.vue';
+import loadMore from '../../components/common/load-more.vue';
 export default {
 	components: {
 		goodsList,
-		headSwiper
+		headSwiper,
+		loadMore
 	},
 	data() {
 		return {
 			titleNViewBackground: '',
 			swiperCurrent: 0,
 			swiperLength: 0,
+			moreLoadText: '正在加载更多',
 			// 导航栏目
 			carouselList: [],
 			goodsList: [],
@@ -138,8 +143,22 @@ export default {
 		uni.navigateTo({
 			url: '/pages/notice/notice'
 		});
-	}
+	},
 	// #endif
+	// 下拉加载更多
+	onReachBottom() {
+		console.log('下拉触底');
+		setTimeout(() => {
+			this.goodsList.push(...[{
+							image: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553187020783&di=bac9dd78b36fd984502d404d231011c0&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201609%2F26%2F20160926173213_s5adi.jpeg",
+							image2: "http://pic.rmb.bdstatic.com/819a044daa66718c2c40a48c1ba971e6.jpeg",
+							image3: "http://img001.hc360.cn/y5/M00/1B/45/wKhQUVYFE0uEZ7zVAAAAAMj3H1w418.jpg",
+							title: "古黛妃 短袖t恤女夏装2019新款韩版宽松",
+							price: 179,
+							sales: 61
+					}])
+		}, 1000);
+	}
 };
 </script>
 

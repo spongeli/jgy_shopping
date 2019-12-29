@@ -1,0 +1,11 @@
+.v-f,.v-fc,.v-fs{
+	display: flex;
+}
+.v-fc{
+	justify-content: center;
+	align-items: center;
+}
+.v-fs{
+	justify-content: space-between;
+
+}
