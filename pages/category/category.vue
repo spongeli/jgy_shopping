@@ -1,10 +1,13 @@
 <template>
 	<view class="content">
+		<!-- 左侧的分类栏 -->
 		<scroll-view scroll-y class="left-aside">
 			<view v-for="item in flist" :key="item.id" class="f-item b-b" :class="{active: item.id === currentId}" @click="tabtap(item)">
 				{{item.name}}
 			</view>
 		</scroll-view>
+		
+		<!-- 右侧的分类栏 -->
 		<scroll-view scroll-with-animation scroll-y class="right-aside" @scroll="asideScroll" :scroll-top="tabScrollTop">
 			<view v-for="item in slist" :key="item.id" class="s-list" :id="'main-'+item.id">
 				<text class="s-item">{{item.name}}</text>
@@ -16,6 +19,7 @@
 				</view>
 			</view>
 		</scroll-view>
+		
 	</view>
 </template>
 
@@ -55,7 +59,7 @@
 				
 				this.currentId = item.id;
 				let index = this.slist.findIndex(sitem=>sitem.pid === item.id);
-				this.tabScrollTop = this.slist[index].top;
+				this.tabScrollTop = this.slist[index+1].top;
 			},
 			//右侧栏滚动
 			asideScroll(e){

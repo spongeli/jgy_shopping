@@ -1,5 +1,6 @@
 <template>
 	<view class="container">
+		<!-- 产品轮播图 -->
 		<view class="carousel">
 			<swiper indicator-dots circular=true duration="400">
 				<swiper-item class="swiper-item" v-for="(item,index) in imgList" :key="index">
@@ -13,7 +14,7 @@
 				</swiper-item>
 			</swiper>
 		</view>
-		
+		<!-- 产品信息 -->
 		<view class="introduce-section">
 			<text class="title">恒源祥2019春季长袖白色t恤 新款春装</text>
 			<view class="price-box">
@@ -29,21 +30,6 @@
 			</view>
 		</view>
 		
-		<!--  分享 -->
-		<view class="share-section" @click="share">
-			<view class="share-icon">
-				<text class="yticon icon-xingxing"></text>
-				 返
-			</view>
-			<text class="tit">该商品分享可领49减10红包</text>
-			<text class="yticon icon-bangzhu1"></text>
-			<view class="share-btn">
-				立即分享
-				<text class="yticon icon-you"></text>
-			</view>
-			
-		</view>
-		
 		<view class="c-list">
 			<view class="c-row b-b" @click="toggleSpec">
 				<text class="tit">购买类型</text>
@@ -54,11 +40,11 @@
 				</view>
 				<text class="yticon icon-you"></text>
 			</view>
-			<view class="c-row b-b">
+<!-- 			<view class="c-row b-b">
 				<text class="tit">优惠券</text>
 				<text class="con t-r red">领取优惠券</text>
 				<text class="yticon icon-you"></text>
-			</view>
+			</view> -->
 			<view class="c-row b-b">
 				<text class="tit">促销活动</text>
 				<view class="con-list">
@@ -425,67 +411,6 @@
 			}
 		}
 	}
-	/* 分享 */
-	.share-section{
-		display:flex;
-		align-items:center;
-		color: $font-color-base;
-		background: linear-gradient(left, #fdf5f6, #fbebf6);
-		padding: 12upx 30upx;
-		.share-icon{
-			display:flex;
-			align-items:center;
-			width: 70upx;
-			height: 30upx;
-			line-height: 1;
-			border: 1px solid $uni-color-primary;
-			border-radius: 4upx;
-			position:relative;
-			overflow: hidden;
-			font-size: 22upx;
-			color: $uni-color-primary;
-			&:after{
-				content: '';
-				width: 50upx;
-				height: 50upx;
-				border-radius: 50%;
-				left: -20upx;
-				top: -12upx;
-				position:absolute;
-				background: $uni-color-primary;
-			}
-		}
-		.icon-xingxing{
-			position:relative;
-			z-index: 1;
-			font-size: 24upx;
-			margin-left: 2upx;
-			margin-right: 10upx;
-			color: #fff;
-			line-height: 1;
-		}
-		.tit{
-			font-size: $font-base;
-			margin-left:10upx;
-		}
-		.icon-bangzhu1{
-			padding: 10upx;
-			font-size: 30upx;
-			line-height: 1;
-		}
-		.share-btn{
-			flex: 1;
-			text-align:right;
-			font-size: $font-sm;
-			color: $uni-color-primary;
-		}
-		.icon-you{
-			font-size: $font-sm;
-			margin-left: 4upx;
-			color: $uni-color-primary;
-		}
-	}
-	
 	.c-list{
 		font-size: $font-sm + 2upx;
 		color: $font-color-base;
