@@ -7,7 +7,7 @@
 			<!-- 背景色区域 -->
 			<view class="titleNview-background" :style="{ backgroundColor: zhtitleNViewBackground}"></view>
 			<swiper class="carousel" circular @change="swiperChange">
-				<swiper-item v-for="(item, index) in carouselList" :key="index" class="carousel-item" @click="navToDetailPage(item.id)"><image :src="item.src" /></swiper-item>
+				<swiper-item v-for="(item, index) in carouselList" :key="index" class="carousel-item" @click="navToDetailPage(item.id)"><image :src="item.imgSrc" /></swiper-item>
 			</swiper>
 			<!-- 自定义swiper指示器 -->
 			<view class="swiper-dots">
@@ -43,13 +43,13 @@ export default {
 		swiperChange(e) {
 			const index = e.detail.current;
 			this.swiperCurrent = index;
-			this.titleNViewBackground = this.carouselList[index].background;
+			this.titleNViewBackground = this.carouselList[index].backGroundColor;
 		},
 	},
 	computed:{
 		zhtitleNViewBackground(){
 			try{
-				return this.carouselList[this.swiperCurrent].background
+				return this.carouselList[this.swiperCurrent].backGroundColor
 			}catch(e){
 			}
 			return 

@@ -1,9 +1,9 @@
 <template>
 	<view class="guess-section">
-		<view v-for="(item, index) in goodsList" :key="index" class="guess-item" @click="navToDetailPage(item.id)">
-			<view class="image-wrapper"><image :src="item.image" mode="aspectFill"></image></view>
-			<text class="title clamp">{{ item.title }}</text>
-			<text class="price">￥{{ item.price }}</text>
+		<view v-for="(item, index) in goodsList" :key="index" class="guess-item" @click="navToDetailPage(item.goodsId)">
+			<view class="image-wrapper"><image :src="getHeaderImgUrl(item.goodsHeaderImg)" mode="aspectFill"></image></view>
+			<text class="title clamp">{{ item.goodsName }}</text>
+			<text class="price">￥{{ item.goodsPrice }}</text>
 		</view>
 	</view>
 </template>
@@ -20,6 +20,12 @@
 				uni.navigateTo({
 					url: `/pages/product/product?id=${id}`
 				});
+			},
+			getHeaderImgUrl(item){
+				if(item.indexOf(",") > 1){
+					return item.split(',')[0]
+				}
+				return item
 			}
 		},
 		created() {

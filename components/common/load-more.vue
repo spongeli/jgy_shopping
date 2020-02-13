@@ -23,5 +23,6 @@
 		background-color: #FFFFFF;
 		color: #C0C4CC;
 		box-shadow: 0 0px 1px rgba(243, 243, 243);
+		font-size: 14px;
 	}
 </style>
