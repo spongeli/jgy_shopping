@@ -41,7 +41,7 @@
 				<text class="con t-r red">领取优惠券</text>
 				<text class="yticon icon-you"></text>
 			</view> -->
-<!-- 			<view class="c-row b-b">
+			<!-- 			<view class="c-row b-b">
 				<text class="tit">促销活动</text>
 				<view class="con-list">
 					<text>新人首单送20元无门槛代金券</text>
@@ -142,7 +142,8 @@
 					<text>{{item.attrName}}</text>
 					<view class="item-list">
 
-						<text v-for="(childItem, childIndex) in item.attrList.split(',')" :key="childIndex" class="tit" :class="{selected: validSelected(item.attrId,childItem)}" @click="selectSpec(item.attrId, childItem)">
+						<text v-for="(childItem, childIndex) in item.attrList.split(',')" :key="childIndex" class="tit" :class="{selected: validSelected(item.attrId,childItem)}"
+						 @click="selectSpec(item.attrId, childItem)">
 							{{childItem}}
 						</text>
 					</view>
@@ -258,24 +259,21 @@
 		methods: {
 			// 获取商品详情
 			gainGoodDetail(goodId) {
-				uni.request({
-					url: this.$const.SERVER_URL + `/goods/${goodId}`,
-					success: res => {
-						console.log(res);
-						if (res.data.status == 200) {
-							this.productDetail = res.data.data.goods
-							this.dynamicCates = res.data.data.dynamicCates
-							this.staticsCates = res.data.data.staticsCates
-							this.innitCateParam();
-						}
-					},
-					fail: res => {
+				this.$get(`/goods/${goodId}`).then(res => {
+					if (res[0]) {
 						uni.showToast({
 							title: "服务器异常",
 							icon: "none"
 						})
+					} else {
+						if (res[1].data.status == 200) {
+							this.productDetail = res[1].data.data.goods
+							this.dynamicCates = res[1].data.data.dynamicCates
+							this.staticsCates = res[1].data.data.staticsCates
+							this.innitCateParam();
+						}
 					}
-				});
+				})
 			},
 			innitCateParam() {
 				//规格 默认选中第一条
@@ -286,9 +284,9 @@
 					this.selectedCates.push(selectedCate)
 				})
 			},
-			validSelected(attrId,item){
+			validSelected(attrId, item) {
 				for (let i = 0; i < this.selectedCates.length; i++) {
-					if(this.selectedCates[i].attrId == attrId){
+					if (this.selectedCates[i].attrId == attrId) {
 						return item == this.selectedCates[i].attrName
 					}
 				}
@@ -308,7 +306,7 @@
 			//选择规格
 			selectSpec(attrId, attrName) {
 				this.selectedCates.forEach(item => {
-					if(item.attrId == attrId){
+					if (item.attrId == attrId) {
 						item.attrName = attrName
 					}
 				})
@@ -481,13 +479,13 @@
 			flex-direction: column;
 			color: $font-color-dark;
 			line-height: 40upx;
-			
-			.staticsKey{
+
+			.staticsKey {
 				color: #999;
 				margin-right: 15px;
 			}
-			
-			.staticsValue{
+
+			.staticsValue {
 				color: #333;
 				margin-left: 5px;
 			}

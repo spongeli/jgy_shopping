@@ -18,16 +18,14 @@
 							"disabled": true,
 							"placeholderColor": "#606266"
 						},
-						"buttons": [
-							{
-								"fontSrc": "/static/yticon.ttf",
-								"text": "\ue744",
-								"fontSize": "27",
-								"color": "#303133",
-								"background": "rgba(0,0,0,0)",
-								"redDot": true
-							}
-						]
+						"buttons": [{
+							"fontSrc": "/static/yticon.ttf",
+							"text": "\ue744",
+							"fontSize": "27",
+							"color": "#303133",
+							"background": "rgba(0,0,0,0)",
+							"redDot": true
+						}]
 					}
 				}
 			}
@@ -147,30 +145,51 @@
 			"style": {
 				"navigationBarTitleText": "支付成功"
 			}
-		}
-	    ,{
-            "path" : "pages/notice/notice",
-            "style" : {
+		}, {
+			"path": "pages/notice/notice",
+			"style": {
 				"navigationBarTitleText": "通知"
 			}
-        }
-        ,{
-            "path" : "pages/category/category",
-            "style" : {
+		}, {
+			"path": "pages/category/category",
+			"style": {
 				"navigationBarTitleText": "分类",
 				"app-plus": {
 					"bounce": "none"
 				}
 			}
-        }
-        ,{
-            "path" : "pages/product/list",
-            "style" : {
+		}, {
+			"path": "pages/product/list",
+			"style": {
 				"enablePullDownRefresh": true,
 				"navigationBarTitleText": "商品列表"
 			}
-        }
-    ],
+		}, {
+			"path": "pages/search/search",
+			"style": {
+				// // #ifdef MP
+				// "navigationBarTitleText": "搜索页",
+				// //"navigationStyle": "custom",
+				// // #endif 
+				// "app-plus": {
+				// 	"titleNView": {
+				// 		// "type": "transparent",
+				// 		"searchInput": {
+				// 			"backgroundColor": "rgba(231, 231, 231,.7)",
+				// 			"borderRadius": "16px",
+				// 			"placeholder": "小二，来一瓶我想要的酒",
+				// 			"placeholderColor": "#606266"
+				// 		},
+				// 		"buttons": [{
+				// 			"text": "搜索",
+				// 			"fontSize": "15",
+				// 			"color": "#606266"
+				// 		}]
+				// 	}
+				// }
+			}
+		}
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "金瓜御",

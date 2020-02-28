@@ -2,7 +2,7 @@
 	<view class="container">
 		<!-- 小程序头部兼容 -->
 		<!-- #ifdef MP -->
-		<view class="mp-search-box"><input class="ser-input" type="text" value="小二，来一瓶我想要的酒" disabled @click="tocategory" /></view>
+		<view class="mp-search-box"><input class="ser-input" type="text" value="小二，来一瓶我想要的酒" disabled @click="toSearch" /></view>
 		<!-- #endif -->
 
 		<!-- 头部轮播 -->
@@ -97,9 +97,9 @@
 					url: `/pages/product/product?id=${id}`
 				});
 			},
-			tocategory() {
-				uni.switchTab({
-					url: '/pages/category/category'
+			toSearch() {
+				uni.navigateTo({
+					url: '/pages/search/search'
 				});
 			},
 			// 活动跳转页面
@@ -111,12 +111,17 @@
 			},
 			// 获取首页配置内容
 			gainIndexSetUp() {
-				uni.request({
-					url: this.$const.SERVER_URL + '/index',
-					success: res => {
-						console.log(res);
-						if (res.data.status == 200) {
-							let data = res.data.data
+				this.$get(`/index`).then(res => {
+					let fail = res[0];
+					let success = res[1]
+					if (fail) {
+						uni.showToast({
+							title: "服务器异常",
+							icon: "none"
+						})
+					} else {
+						if (success.data.status == 200) {
+							let data = success.data.data
 							data.forEach(item => {
 								switch (item.type) {
 									case 0:
@@ -131,47 +136,39 @@
 								}
 							})
 						}
-					},
-					fail: res => {
-						uni.showToast({
-							title: "服务器异常",
-							icon: "none"
-						})
 					}
-				});
+				})
 			},
 			// 获取商品信息
 			gainGoodsList() {
-				uni.request({
-					url: this.$const.SERVER_URL + '/goods',
-					method: 'POST',
-					data: this.searchInparam,
-					success: res => {
-						console.log(res);
-						if (res.data.status == 200) {
-							let data = res.data.data
-							this.searchInparam.pageInparam.pageCurrentPage = data.nextPage
-							// 是否还有下一页
-							if (!data.hasNextPage) this.moreLoadText = '我是有底线的(⊙o⊙)'
-							for(var i in data.list){
-							  this.goodsList.push(data.list[i]);
-							}
-						}
-					},
-					fail: res => {
+				this.$post(`/goods`, this.searchInparam).then(res => {
+					let fail = res[0];
+					let success = res[1]
+					if (fail) {
 						uni.showToast({
 							title: "服务器异常",
 							icon: "none"
 						})
+					} else {
+						console.log(success);
+						if (success.data.status == 200) {
+							let data = success.data.data
+							this.searchInparam.pageInparam.pageCurrentPage = data.nextPage
+							// 是否还有下一页
+							if (!data.hasNextPage) this.moreLoadText = '我是有底线的(⊙o⊙)'
+							for (var i in data.list) {
+								this.goodsList.push(data.list[i]);
+							}
+						}
 					}
-				});
+				})
 			}
 		},
 		// #ifndef MP
 		// 标题栏input搜索框点击
 		onNavigationBarSearchInputClicked: async function(e) {
-			uni.switchTab({
-				url: '/pages/category/category'
+			uni.navigateTo({
+				url: '/pages/search/search'
 			});
 		},
 		//点击导航栏 buttons 时触发
