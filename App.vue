@@ -33,6 +33,7 @@
 <style lang='scss'>
 	@import url("./static/css/base.scss");
 	@import url("./static/css/my-base.css");
+	@import url("//at.alicdn.com/t/font_1667570_apnhfucs7l.css");
 	/*
 		全局公共样式和字体图标
 	*/
@@ -364,6 +365,7 @@
 	image,
 	video {
 		box-sizing: border-box;
+		font-size: 14px;
 	}
 	/* 骨架屏替代方案 */
 	.Skeleton {

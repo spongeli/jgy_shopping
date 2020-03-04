@@ -42,7 +42,7 @@
 		},
 		methods: {
 			async loadData() {
-				this.$get("/goods").then(res => {
+				this.$get("/cates").then(res => {
 					let fail = res[0]
 					let success = res[1]
 					console.log(success);
@@ -93,9 +93,9 @@
 				})
 				this.sizeCalcState = true;
 			},
-			navToList(sid, tid) {
+			navToList(pid, id) {
 				uni.navigateTo({
-					url: `/pages/product/list?fid=${this.currentId}&sid=${sid}&tid=${tid}`
+					url: `/pages/product/list?pid=${pid}&id=${id}`
 				})
 			}
 		}
@@ -107,6 +107,8 @@
 	.content {
 		height: 100%;
 		background-color: #f8f8f8;
+		
+		
 	}
 
 	.content {

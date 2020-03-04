@@ -1,5 +1,5 @@
 <template>
-	<div class="load_more v-fc">
+	<div class="load_more v-f-c">
 		{{moreLoadText}}
 	</div>
 </template>

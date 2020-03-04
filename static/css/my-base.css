@@ -1,11 +1,37 @@
-.v-f,.v-fc,.v-fs{
+.v-f,
+.v-f-c,
+.v-f-s,
+.v-f-ss,
+.v-fc,
+.v-fc-s,
+.v-fc-b {
 	display: flex;
 }
-.v-fc{
+
+.v-f-c {
 	justify-content: center;
 	align-items: center;
 }
-.v-fs{
-	justify-content: space-between;
 
+.v-fc,
+.v-fc-s,
+.v-fc-b {
+	flex-direction: column;
 }
+
+.v-fc-s {
+	justify-content: space-between;
+}
+
+.v-fc-b {
+	justify-content: space-around;
+}
+
+.v-f-s {
+	justify-content: space-between;
+}
+
+.v-f-ss {
+	justify-content: space-around;
+}
+

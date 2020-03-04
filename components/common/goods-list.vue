@@ -1,7 +1,9 @@
 <template>
 	<view class="guess-section">
 		<view v-for="(item, index) in goodsList" :key="index" class="guess-item" @click="navToDetailPage(item.goodsId)">
-			<view class="image-wrapper"><image :src="getHeaderImgUrl(item.goodsHeaderImg)" mode="aspectFill"></image></view>
+			<view class="image-wrapper">
+				<image class="goods_list_image" :src="getHeaderImgUrl(item.goodsHeaderImg)" mode="aspectFill"></image>
+			</view>
 			<text class="title clamp">{{ item.goodsName }}</text>
 			<text class="price">￥{{ item.goodsPrice }}</text>
 		</view>
@@ -10,10 +12,10 @@
 
 <script>
 	export default {
-		props:{
-			goodsList:Array
+		props: {
+			goodsList: Array
 		},
-		methods:{
+		methods: {
 			//详情页
 			navToDetailPage(id) {
 				//测试数据没有写id，用title代替
@@ -21,8 +23,8 @@
 					url: `/pages/product/product?id=${id}`
 				});
 			},
-			getHeaderImgUrl(item){
-				if(item.indexOf(",") > 1){
+			getHeaderImgUrl(item) {
+				if (item.indexOf(",") > 1) {
 					return item.split(',')[0]
 				}
 				return item
@@ -36,37 +38,48 @@
 
 <style lang="scss">
 	/* 猜你喜欢 */
-	.guess-section{
-		display:flex;
-		flex-wrap:wrap;
+	.guess-section {
+		display: flex;
+		flex-wrap: wrap;
 		padding: 0 30upx;
-		background: #fff;
-		.guess-item{
-			display:flex;
+		background: #F7F7F7;
+		
+
+		.guess-item {
+			display: flex;
 			flex-direction: column;
 			width: 48%;
-			padding-bottom: 40upx;
-			&:nth-child(2n+1){
+			// padding-bottom: 40upx;
+			padding-bottom: 5px;
+			margin-bottom: 20rpx;
+			border-radius: 5px;
+			background-color: #FFFFFF;
+
+			&:nth-child(2n+1) {
 				margin-right: 4%;
 			}
 		}
-		.image-wrapper{
+
+		.image-wrapper {
 			width: 100%;
 			height: 330upx;
 			border-radius: 3px;
 			overflow: hidden;
-			image{
-				width: 100%;
-				height: 100%;
-				opacity: 1;
-			}
 		}
-		.title{
+
+		.goods_list_image {
+			width: 100%;
+			height: 100%;
+			opacity: 1;
+		}
+
+		.title {
 			font-size: $font-lg;
 			color: $font-color-dark;
 			line-height: 80upx;
 		}
-		.price{
+
+		.price {
 			font-size: $font-lg;
 			color: $uni-color-primary;
 			line-height: 1;

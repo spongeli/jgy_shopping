@@ -7,6 +7,7 @@ const store = new Vuex.Store({
 	state: {
 		hasLogin: false,
 		userInfo: {},
+		cateParent:[],
 	},
 	mutations: {
 		login(state, provider) {
@@ -28,7 +29,10 @@ const store = new Vuex.Store({
 		}
 	},
 	actions: {
-	
+
+	},
+	getters:{
+		
 	}
 })
 
