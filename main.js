@@ -51,6 +51,7 @@ Vue.prototype.$api = {
 	json,
 	prePage
 };
+
 Vue.prototype.$const = CONST;
 require("./request/request.js")
 

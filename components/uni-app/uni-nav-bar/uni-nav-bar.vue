@@ -193,7 +193,6 @@
 		display: flex;
 		/* #endif */
 		width: 150rpx;
-		padding-right: 30rpx;
 		justify-content: flex-end;
 	}
 

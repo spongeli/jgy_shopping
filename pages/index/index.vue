@@ -345,7 +345,7 @@
 			align-items: center;
 			font-size: $font-sm + 2upx;
 			color: $font-color-dark;
-			width: 130upx;
+			width: 160upx;
 			margin-right: 10upx;
 		}
 

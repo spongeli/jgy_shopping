@@ -10,16 +10,34 @@
 			...mapMutations(['login'])
 		},
 		onLaunch: function() {
-			let userInfo = uni.getStorageSync('userInfo') || '';
-			if(userInfo.id){
-				//更新登陆状态
-				uni.getStorage({
-					key: 'userInfo',
-					success: (res) => {
-						this.login(res.data);
+			// 检查登陆状态 没有登陆就去登陆
+			uni.checkSession({
+				fail: (res) => {
+					this.login()
+				}
+			})
+		},
+		methods:{
+			login() {
+				uni.login({
+					provider: 'weixin',
+					success: loginRes => {
+						console.log(loginRes.code);
+						this.$get("/wx/login", {
+							token: loginRes.code
+						}).then(res => {
+							if (res[1]) {
+								this.$store.commit("submitToken", res[1].data.data)
+							} else {
+								uni.showToast({
+									title: "服务器异常",
+									icon: "none"
+								})
+							}
+						})
 					}
 				});
-			}
+			},
 		},
 		onShow: function() {
 			console.log('App Show')
@@ -33,7 +51,10 @@
 <style lang='scss'>
 	@import url("./static/css/base.scss");
 	@import url("./static/css/my-base.css");
-	@import url("//at.alicdn.com/t/font_1667570_apnhfucs7l.css");
+	@import url("./static/css/icon.css");
+	@import url("./static/css/uni.css");
+
+	/* @import url("http://at.alicdn.com/t/font_1667570_apnhfucs7l.css"); */
 	/*
 		全局公共样式和字体图标
 	*/
