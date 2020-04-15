@@ -95,7 +95,7 @@
 			<view class="d-header">
 				<text>图文详情</text>
 			</view>
-			<rich-text :nodes="productDetail.goodsDetail"></rich-text>
+			<rich-text :nodes="zhImgDetail(productDetail.goodsDetail)"></rich-text>
 		</view>
 
 		<!-- 底部操作菜单 -->
@@ -257,6 +257,24 @@
 			this.shareList = await this.$api.json('shareList');
 		},
 		methods: {
+			zhImgDetail(val) {
+				if (val == null) {
+					return;
+				}
+				// 正则匹配所有img标签
+				// var regex0 = new RegExp("(i?)(\<img)([^\>]+\>)","gmi");
+				// 正则匹配不含style="" 或 style='' 的img标签
+				// eslint-disable-next-line no-useless-escape
+				var regex1 = new RegExp("(i?)(\<img)(?!(.*?style=['\"](.*)['\"])[^\>]+\>)", 'gmi')
+				// 给不含style="" 或 style='' 的img标签加上style=""
+				val = val.replace(regex1, '$2 style=""$3')
+				// 正则匹配含有style的img标签
+				// eslint-disable-next-line no-useless-escape
+				var regex2 = new RegExp("(i?)(\<img.*?style=['\"])([^\>]+\>)", 'gmi')
+				// 在img标签的style里面增加css样式(这里增加的样式：display:block;max-width:100%;height:auto;border:5px solid red;)
+				val = val.replace(regex2, '$2max-width:100%;height:auto;$3')
+				return val
+			},
 			// 获取商品详情
 			gainGoodDetail(goodId) {
 				this.$get(`/goods/${goodId}`).then(res => {

@@ -1,3 +1,3 @@
 export default {
-	SERVER_URL: "http://hdsb55.natappfree.cc/mall/web",
+	SERVER_URL: "http://127.0.0.1:8888/mall/web",
 }
