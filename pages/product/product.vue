@@ -55,7 +55,7 @@
 				<view class="con-list">
 					<text v-for="(item,index) in staticsCates" :key="index">
 						<span class="staticsKey">{{item.attrName}}</span>
-						<span class="staticsValue" v-for="(item1,index1) in item.attrList.split(',')" :key="index1">
+						<span class="staticsValue" v-for="(item1,index1) in item.attrValue.split(',')" :key="index1">
 							{{item1}}
 						</span>
 					</text>
@@ -63,9 +63,13 @@
 			</view>
 			<view class="c-row b-b">
 				<text class="tit">服务</text>
+
 				<view class="bz-list con">
-					<text>7天无理由退换货 ·</text>
-					<text>假一赔十 ·</text>
+					<block v-for="(item,index) in serviceCates" :key="index">
+						<text v-for="(item1,index1) in item.attrValue.split(',')" :key="index1">
+							{{item1}} ·
+						</text>
+					</block>
 				</view>
 			</view>
 		</view>
@@ -142,7 +146,7 @@
 					<text>{{item.attrName}}</text>
 					<view class="item-list">
 
-						<text v-for="(childItem, childIndex) in item.attrList.split(',')" :key="childIndex" class="tit" :class="{selected: validSelected(item.attrId,childItem)}"
+						<text v-for="(childItem, childIndex) in item.attrValue.split(',')" :key="childIndex" class="tit" :class="{selected: validSelected(item.attrId,childItem)}"
 						 @click="selectSpec(item.attrId, childItem)">
 							{{childItem}}
 						</text>
@@ -164,90 +168,19 @@
 		},
 		data() {
 			return {
+				// 产品信息
 				productDetail: {},
 				staticsCates: [],
 				dynamicCates: [],
+				serviceCates: [],
+
 				selectedCates: [],
 
 				specClass: 'none',
 				specSelected: [],
 
 				favorite: true,
-				shareList: [],
-				imgList: [{
-						src: 'https://gd3.alicdn.com/imgextra/i3/0/O1CN01IiyFQI1UGShoFKt1O_!!0-item_pic.jpg_400x400.jpg'
-					},
-					{
-						src: 'https://gd3.alicdn.com/imgextra/i3/TB1RPFPPFXXXXcNXpXXXXXXXXXX_!!0-item_pic.jpg_400x400.jpg'
-					},
-					{
-						src: 'https://gd2.alicdn.com/imgextra/i2/38832490/O1CN01IYq7gu1UGShvbEFnd_!!38832490.jpg_400x400.jpg'
-					}
-				],
-				desc: `
-					<div style="width:100%">
-						<img style="width:100%;display:block;" src="https://gd3.alicdn.com/imgextra/i4/479184430/O1CN01nCpuLc1iaz4bcSN17_!!479184430.jpg_400x400.jpg" />
-						<img style="width:100%;display:block;" src="https://gd2.alicdn.com/imgextra/i2/479184430/O1CN01gwbN931iaz4TzqzmG_!!479184430.jpg_400x400.jpg" />
-						<img style="width:100%;display:block;" src="https://gd3.alicdn.com/imgextra/i3/479184430/O1CN018wVjQh1iaz4aupv1A_!!479184430.jpg_400x400.jpg" />
-						<img style="width:100%;display:block;" src="https://gd4.alicdn.com/imgextra/i4/479184430/O1CN01tWg4Us1iaz4auqelt_!!479184430.jpg_400x400.jpg" />
-						<img style="width:100%;display:block;" src="https://gd1.alicdn.com/imgextra/i1/479184430/O1CN01Tnm1rU1iaz4aVKcwP_!!479184430.jpg_400x400.jpg" />
-					</div>
-				`,
-				specList: [{
-						id: 1,
-						name: '尺寸',
-					},
-					{
-						id: 2,
-						name: '颜色',
-					},
-				],
-				specChildList: [{
-						id: 1,
-						pid: 1,
-						name: 'XS',
-					},
-					{
-						id: 2,
-						pid: 1,
-						name: 'S',
-					},
-					{
-						id: 3,
-						pid: 1,
-						name: 'M',
-					},
-					{
-						id: 4,
-						pid: 1,
-						name: 'L',
-					},
-					{
-						id: 5,
-						pid: 1,
-						name: 'XL',
-					},
-					{
-						id: 6,
-						pid: 1,
-						name: 'XXL',
-					},
-					{
-						id: 7,
-						pid: 2,
-						name: '白色',
-					},
-					{
-						id: 8,
-						pid: 2,
-						name: '珊瑚粉',
-					},
-					{
-						id: 9,
-						pid: 2,
-						name: '草木绿',
-					},
-				]
+				shareList: []
 			};
 		},
 		async onLoad(options) {
@@ -284,10 +217,13 @@
 							icon: "none"
 						})
 					} else {
-						if (res[1].data.status == 200) {
-							this.productDetail = res[1].data.data.goods
-							this.dynamicCates = res[1].data.data.dynamicCates
-							this.staticsCates = res[1].data.data.staticsCates
+						let resData = res[1].data
+						console.log(resData);
+						if (resData.status == 200) {
+							this.productDetail = resData.data.goods
+							this.dynamicCates = resData.data.dynamicCates
+							this.staticsCates = resData.data.staticsCates
+							this.serviceCates = resData.data.serviceCates
 							this.innitCateParam();
 						}
 					}
@@ -298,7 +234,7 @@
 				this.dynamicCates.forEach(item => {
 					let selectedCate = {}
 					selectedCate.attrId = item.attrId
-					selectedCate.attrName = item.attrList.split(",")[0]
+					selectedCate.attrName = item.attrValue.split(",")[0]
 					this.selectedCates.push(selectedCate)
 				})
 			},
@@ -481,7 +417,7 @@
 		}
 
 		.bz-list {
-			height: 40upx;
+			min-height: 40upx;
 			font-size: $font-sm+2upx;
 			color: $font-color-dark;
 
