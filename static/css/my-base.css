@@ -1,10 +1,57 @@
 .v-f,
+.v-fc,
+.v-fjc,
+.v-fjs {
+	display: flex;
+}
+
+.v-fc,
+.v-fjs,
+.v-fjc {
+	align-items: center;
+}
+
+.v-fjs {
+	justify-content: space-between;
+}
+
+.v-fjc {
+	justify-content: center;
+}
+
+.v-ffc {
+	flex-direction: column;
+	justify-content: center;
+}
+
+.f30 {
+	font-size: 30upx;
+}
+
+.f35 {
+	font-size: 35upx;
+}
+
+.f40 {
+	font-size: 40upx;
+}
+
+.icon-nv {
+	background-color: #FF6A8D !important;
+}
+
+.body {
+	width: 100%;
+}
+
+.v-f,
 .v-f-c,
 .v-f-s,
 .v-f-ss,
 .v-fc,
 .v-fc-s,
-.v-fc-b {
+.v-fc-b,
+.v-fc-c {
 	display: flex;
 }
 
@@ -15,7 +62,8 @@
 
 .v-fc,
 .v-fc-s,
-.v-fc-b {
+.v-fc-b,
+.v-fc-c {
 	flex-direction: column;
 }
 
@@ -27,6 +75,10 @@
 	justify-content: space-around;
 }
 
+.v-fc-c {
+	justify-content: center;
+}
+
 .v-f-s {
 	justify-content: space-between;
 }
@@ -35,3 +87,64 @@
 	justify-content: space-around;
 }
 
+.mtp30 {
+	margin-top: 30px;
+}
+
+.mtp15 {
+	margin-top: 15px;
+}
+
+.mtp10 {
+	margin-top: 10px;
+}
+
+.mtp5 {
+	margin-top: 5px;
+}
+
+.mtp20 {
+	margin-top: 20px;
+}
+
+.mtp25 {
+	margin-top: 25px;
+}
+
+.fs15 {
+	font-size: 15px;
+}
+
+.fs16 {
+	font-size: 16px;
+}
+
+.fs18 {
+	font-size: 18px;
+}
+
+.fs14 {
+	font-size: 14px;
+}
+
+.fs13 {
+	font-size: 13px;
+}
+
+/* uni-app 默认样式修改 */
+uni-button {
+	margin-left: unset;
+	margin-right: unset;
+}
+uni-textarea{
+	width: 100%;
+	font-size: 14px;
+	border: 1px solid #E5E5E5;
+	box-sizing: border-box;
+	padding: 10rpx;
+}
+
+
+.noclick {
+	pointer-events: none !important;
+}

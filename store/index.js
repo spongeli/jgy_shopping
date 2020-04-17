@@ -7,20 +7,18 @@ const store = new Vuex.Store({
 	state: {
 		hasLogin: false,
 		userInfo: {},
+		
 		cateParent: [],
 		token: ``,
 	},
 	mutations: {
-		login(state, provider) {
-
+		login(state, userInfo) {
 			state.hasLogin = true;
-			state.userInfo = provider;
-
+			state.userInfo = userInfo;
 			uni.setStorage({ //缓存用户登陆状态
 				key: 'userInfo',
-				data: provider
+				data: userInfo
 			})
-			console.log(state.userInfo);
 		},
 		logout(state) {
 			state.hasLogin = false;

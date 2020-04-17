@@ -2,7 +2,6 @@ import Vue from 'vue'
 
 
 Vue.prototype.$get = function(url, data) {
-	console.log(uni.getStorageSync('token'));
 	// 返回一个Promise
 	return uni.request({
 		url: this.$const.SERVER_URL + url,

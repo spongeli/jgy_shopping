@@ -8,17 +8,18 @@
 				<navigator class="navigator" v-if="hasLogin" url="../index/index" open-type="switchTab">随便逛逛></navigator>
 			</view>
 			<view v-else class="empty-tips">
-				空空如也
+				<view>空空如也</view>
 				<!-- #ifdef H5 -->
-				<view class="navigator" @click="authPopupClick">去登陆></view>
+				<view class="navigator" @click="navToLogin">去登陆></view>
+				<!-- #endif -->
+
+				<!-- #ifdef MP-WEIXIN -->
+				<button class="login-button" type='primary' open-type="getUserInfo" withCredentials="true" lang="zh_CN"
+				 @getuserinfo="wxGetUserInfo">
+					一键快捷登陆
+				</button>
 				<!-- #endif -->
 			</view>
-			<!-- #ifdef MP-WEIXIN -->
-			<button class="login-button" type='primary' open-type="getUserInfo" withCredentials="true" lang="zh_CN"
-			 @getuserinfo="wxGetUserInfo">
-				一键快捷登陆
-			</button>
-			<!-- #endif -->
 		</view>
 		<view v-else>
 			<!-- 列表 -->
@@ -84,7 +85,7 @@
 			this.loadData();
 
 
-			
+
 		},
 		watch: {
 			//显示空白页
@@ -96,7 +97,9 @@
 			}
 		},
 		computed: {
-			...mapState(['hasLogin'])
+			hasLogin(){
+				return this.$store.state.hasLogin
+			}
 		},
 		methods: {
 			login() {
@@ -126,16 +129,29 @@
 				this.$refs.authPopup.open();
 			},
 			wxGetUserInfo(val) {
-				console.log(`wxGetUserInfo`, val);
 				// 获取用户信息
 				uni.getUserInfo({
 					provider: 'weixin',
+					withCredentials: true,
 					success: infoRes => {
-						console.log(infoRes);
-						console.log('用户昵称为：' + infoRes.userInfo.nickName);
-					},
-					fail: errRes => {
-						console.log(errRes);
+						let userInfo = infoRes.userInfo
+						this.$post(`/user/wxlogin`, {
+							nickname: userInfo.nickName,
+							userpic: userInfo.avatarUrl
+						}).then(res => {
+							if (res[1]) {
+								let resData = res[1].data
+								console.log(resData);
+								if(resData.status == 200){
+									this.$store.commit(`login`,resData.data)
+								}
+							} else {
+								uni.showToast({
+									title: "服务器异常",
+									icon: "none"
+								})
+							}
+						})
 					}
 				});
 			},
@@ -480,7 +496,6 @@
 	}
 
 	.login-button {
-		margin-top: 20px;
 		width: 300rpx;
 		color: #fa436a !important;
 		border: 0px !important;
