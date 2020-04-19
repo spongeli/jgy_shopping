@@ -12,8 +12,8 @@
 				</view>
 				<view class="input-content">
 					<view class="input-item">
-						<text class="tit">手机号码</text>
-						<input type="number" :value="mobile" placeholder="请输入手机号码" maxlength="11" data-key="mobile" @input="inputChange" />
+						<text class="tit">手机号码/邮箱</text>
+						<input type="number" :value="mobile" placeholder="请输入手机号码/邮箱" maxlength="11" data-key="mobile" @input="inputChange" />
 					</view>
 					<view class="input-item">
 						<text class="tit">密码</text>
@@ -26,8 +26,23 @@
 					忘记密码?
 				</view>
 			</view>
-			<view v-else>
-				123
+			<view v-else class="register-container">
+				<view class="input-content">
+					<view class="input-item">
+						<text class="tit">手机号码/邮箱</text>
+						<input type="number" :value="mobile" placeholder="请输入手机号码/邮箱" maxlength="11" data-key="mobile" @input="inputChange" />
+					</view>
+					<view class="input-item">
+						<text class="tit">密码</text>
+						<input type="mobile" value="" placeholder="8-18位不含特殊字符的数字、字母组合" placeholder-class="input-empty" maxlength="20"
+						 password data-key="password" @input="inputChange" @confirm="toLogin" />
+					</view>
+					<view class="input-item">
+						<text class="tit">密码</text>
+						<input type="mobile" value="" placeholder="8-18位不含特殊字符的数字、字母组合" placeholder-class="input-empty" maxlength="20"
+						 password data-key="password" @input="inputChange" @confirm="toLogin" />
+					</view>
+				</view>
 			</view>
 		</view>
 
