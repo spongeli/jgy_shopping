@@ -177,6 +177,10 @@
 					this.$post(`/user/doLoginPwd`, this.pwdLoginForm).then(res => {
 						this.loginResultHandle(res)
 					})
+				}else if(this.loginType == 'verify'){
+					this.$post(`/user/doLoginVerify`, this.verifyLoginForm).then(res => {
+						this.loginResultHandle(res)
+					})
 				}
 			},
 			loginResultHandle(res) {
@@ -190,6 +194,9 @@
 						this.$store.commit("submitToken", resData.data.token)
 						// 保存用户信息
 						this.$store.commit(`login`, resData.data.userinfo)
+						uni.navigateBack({
+							delta:1
+						})
 					} else {
 						this.$util.showFail(resData.msg)
 					}

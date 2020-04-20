@@ -112,14 +112,14 @@
 				<text class="yticon icon-gouwuche"></text>
 				<text>购物车</text>
 			</navigator>
-			<view class="p-b-btn" :class="{active: favorite}" @click="toFavorite">
+<!-- 			<view class="p-b-btn" :class="{active: favorite}" @click="toFavorite">
 				<text class="yticon icon-shoucang"></text>
 				<text>收藏</text>
 			</view>
-
+ -->
 			<view class="action-btn-group">
 				<button type="primary" class=" action-btn no-border buy-now-btn" @click="buy">立即购买</button>
-				<button type="primary" class=" action-btn no-border add-cart-btn">加入购物车</button>
+				<button type="primary" class=" action-btn no-border add-cart-btn" @click="addCard">加入购物车</button>
 			</view>
 		</view>
 
@@ -212,10 +212,7 @@
 			gainGoodDetail(goodId) {
 				this.$get(`/goods/${goodId}`).then(res => {
 					if (res[0]) {
-						uni.showToast({
-							title: "服务器异常",
-							icon: "none"
-						})
+						this.$util.showFail("服务器异常")
 					} else {
 						let resData = res[1].data
 						console.log(resData);
@@ -269,16 +266,29 @@
 			share() {
 				this.$refs.share.toggleMask();
 			},
-			//收藏
-			toFavorite() {
-				this.favorite = !this.favorite;
-			},
 			buy() {
 				uni.navigateTo({
 					url: `/pages/order/createOrder`
 				})
 			},
-			stopPrevent() {}
+			stopPrevent() {},
+			// 加入购物车
+			addCard(){
+				this.$post(`/card/add`,{
+					goodsId:this.productDetail.goodsId,
+					number:1
+				}).then(res => {
+					if (res[0]) {
+						this.$util.showFail("服务器异常")
+					} else {
+						let resData = res[1].data
+						console.log(resData);
+						if (resData.status == 200) {
+							this.$util.showSuccess("添加成功，在购物车等亲~");
+						}
+					}
+				})
+			}
 		},
 		computed: {
 			getImgList() {
@@ -730,13 +740,13 @@
 	/* 底部操作菜单 */
 	.page-bottom {
 		position: fixed;
-		left: 30upx;
+		left: 50upx;
 		bottom: 30upx;
 		z-index: 95;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: 690upx;
+		width: 650upx;
 		height: 100upx;
 		background: rgba(255, 255, 255, .9);
 		box-shadow: 0 0 20upx 0 rgba(0, 0, 0, .5);
