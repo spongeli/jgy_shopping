@@ -11,37 +11,70 @@
 					欢迎回来！
 				</view>
 				<view class="input-content">
-					<view class="input-item">
-						<text class="tit">手机号码/邮箱</text>
-						<input type="number" :value="mobile" placeholder="请输入手机号码/邮箱" maxlength="11" data-key="mobile" @input="inputChange" />
+					<!-- 密码登录 -->
+					<view v-if="loginType == 'pwd'">
+						<view class="input-item">
+							<text class="tit">手机号码/邮箱</text>
+							<input v-model="pwdLoginForm.username" placeholder="请输入手机号码/邮箱" />
+						</view>
+						<view class="input-item">
+							<text class="tit">密码</text>
+							<input type="mobile" v-model="pwdLoginForm.password" placeholder="8-18位不含特殊字符的数字、字母组合" placeholder-class="input-empty"
+							 maxlength="20" password />
+						</view>
 					</view>
-					<view class="input-item">
-						<text class="tit">密码</text>
-						<input type="mobile" value="" placeholder="8-18位不含特殊字符的数字、字母组合" placeholder-class="input-empty" maxlength="20"
-						 password data-key="password" @input="inputChange" @confirm="toLogin" />
+
+					<!-- 验证码登陆 -->
+					<view v-else>
+						<view class="input-item">
+							<text class="tit">手机号码/邮箱</text>
+							<view class="v-f-s" style="width: 100%;">
+								<input v-model="verifyLoginForm.username" placeholder="请输入手机号码/有限" />
+								<view class="send-verify-container" @click="sendVerify" :class="{'noclick':!sendVerifyStatus}">{{sendVerifyText}}</view>
+							</view>
+						</view>
+						<view class="input-item">
+							<text class="tit">验证码</text>
+							<input type="number" v-model="verifyLoginForm.verify" placeholder="请输入收到的验证码" placeholder-class="input-empty"
+							 maxlength="6" />
+						</view>
+					</view>
+
+
+					<view class="login-type-container v-f-s">
+						<view @click="changLoginType">{{loginTypeMsg}}</view>
+						<!-- <view class="forget-section">忘记密码?</view> -->
 					</view>
 				</view>
-				<button class="confirm-btn" @click="toLogin" :disabled="logining">登录</button>
-				<view class="forget-section">
-					忘记密码?
-				</view>
+				<button class="confirm-btn" @click="toLogin" :disabled="!toLoginStatus">登录</button>
 			</view>
+
+			<!-- 注册 -->
 			<view v-else class="register-container">
 				<view class="input-content">
 					<view class="input-item">
 						<text class="tit">手机号码/邮箱</text>
-						<input type="number" :value="mobile" placeholder="请输入手机号码/邮箱" maxlength="11" data-key="mobile" @input="inputChange" />
+						<view class="v-f-s" style="width: 100%;">
+							<input v-model="registerForm.username" placeholder="请输入手机号码/邮箱" />
+							<view class="send-verify-container" @click="sendVerify" :class="{'noclick':!sendVerifyStatus}">{{sendVerifyText}}</view>
+						</view>
+					</view>
+					<view class="input-item">
+						<text class="tit">验证码</text>
+						<input type="mobile" v-model="registerForm.verify" placeholder="请输入收到的验证码" placeholder-class="input-empty"
+						 maxlength="6" />
 					</view>
 					<view class="input-item">
 						<text class="tit">密码</text>
-						<input type="mobile" value="" placeholder="8-18位不含特殊字符的数字、字母组合" placeholder-class="input-empty" maxlength="20"
-						 password data-key="password" @input="inputChange" @confirm="toLogin" />
+						<input type="mobile" v-model="registerForm.password" placeholder="8-18位不含特殊字符的数字、字母组合" placeholder-class="input-empty"
+						 maxlength="20" password />
 					</view>
 					<view class="input-item">
-						<text class="tit">密码</text>
-						<input type="mobile" value="" placeholder="8-18位不含特殊字符的数字、字母组合" placeholder-class="input-empty" maxlength="20"
-						 password data-key="password" @input="inputChange" @confirm="toLogin" />
+						<text class="tit">确认密码</text>
+						<input type="mobile" v-model="registerForm.password2" placeholder="8-18位不含特殊字符的数字、字母组合" placeholder-class="input-empty"
+						 maxlength="20" password />
 					</view>
+					<button class="confirm-btn" @click="toRegister" :disabled="!toRegisterStatus">登录</button>
 				</view>
 			</view>
 		</view>
@@ -101,62 +134,153 @@
 </template>
 
 <script>
-	import {
-		mapMutations
-	} from 'vuex';
-
 	export default {
 		data() {
 			return {
+				sendIndex: 60,
 				mobile: '',
 				password: '',
 				logining: false,
 
-				isLogin: true
+				isLogin: true, // 是不是去登陆
+				loginType: "pwd",
+				// 注册表单
+				registerForm: {
+					username: 'spongeli_lc@sina.com',
+					verify: '',
+					password: '',
+					password2: ''
+				},
+				// 密码登陆表单
+				pwdLoginForm: {
+					username: "",
+					password: ""
+				},
+				// 验证码登陆表单
+				verifyLoginForm: {
+					username: "",
+					verify: ""
+				}
 			}
 		},
 		onLoad() {
 
 		},
 		methods: {
-			...mapMutations(['login']),
-			inputChange(e) {
-				const key = e.currentTarget.dataset.key;
-				this[key] = e.detail.value;
-			},
 			navBack() {
 				uni.navigateBack();
 			},
-			async toLogin() {
-				this.logining = true;
-				const {
-					mobile,
-					password
-				} = this;
-				/* 数据验证模块
-				if(!this.$api.match({
-					mobile,
-					password
-				})){
-					this.logining = false;
-					return;
+
+
+			toLogin() {
+				if (this.loginType == 'pwd') {
+					this.$post(`/user/doLoginPwd`, this.pwdLoginForm).then(res => {
+						this.loginResultHandle(res)
+					})
 				}
-				*/
-				const sendData = {
-					mobile,
-					password
-				};
-				const result = await this.$api.json('userInfo');
-				if (result.status === 1) {
-					this.login(result.data);
-					uni.navigateBack();
+			},
+			loginResultHandle(res) {
+				if (res[0]) {
+					this.$util.showFail("服务器异常")
 				} else {
-					this.$api.msg(result.msg);
-					this.logining = false;
+					let resData = res[1].data
+					console.log(resData);
+					if (resData.status == 200) {
+						// 保存token
+						this.$store.commit("submitToken", resData.data.token)
+						// 保存用户信息
+						this.$store.commit(`login`, resData.data.userinfo)
+					} else {
+						this.$util.showFail(resData.msg)
+					}
 				}
+			},
+			changLoginType() {
+				this.loginType = this.loginType == 'pwd' ? 'verify' : 'pwd'
+			},
+			sendVerify() {
+				if (this.sendIndex != 60) return
+
+				let username = '';
+				if (this.isLogin) {
+					username = this.loginType == 'pwd' ? this.pwdLoginForm.username : username = this.verifyLoginForm.username
+				} else {
+					username = this.registerForm.username
+				}
+				if (!username) {
+					this.$util.showFail("用户名必填")
+					return
+				}
+				this.$get(`/user/send_verify?username=${username}`).then(res => {
+					if (res[0]) {
+						this.$util.showFail("服务器异常")
+					} else {
+						let resData = res[1].data
+						console.log(resData);
+						if (resData.status == 200) {
+							this.sendIndex--
+							let timer = setInterval(() => {
+								this.sendIndex--
+								if (this.sendIndex == 0) {
+									this.sendIndex = 60
+									clearInterval(timer)
+								}
+							}, 1000)
+						} else {
+							uni.showToast({
+								title: resData.msg,
+								icon: "none"
+							})
+						}
+					}
+				})
+			},
+			toRegister() {
+				this.$post(`/user/doRegister`, this.registerForm).then(res => {
+					if (res[0]) {
+						uni.showToast({
+							title: "服务器异常",
+							icon: "none"
+						})
+					} else {
+						let resData = res[1].data
+						console.log(resData);
+						if (resData.status == 200) {
+							this.$util.showSuccess("注册成功，前往登录");
+							setTimeout(() => {
+								this.isLogin = true
+							}, 500)
+						} else {
+							uni.showToast({
+								title: resData.msg,
+								icon: "none"
+							})
+						}
+					}
+				})
 			}
 		},
-
+		computed: {
+			loginTypeMsg() {
+				return this.loginType == 'pwd' ? '验证码登录' : '密码登录'
+			},
+			sendVerifyText() {
+				return this.sendIndex == 60 ? '发送验证码' : `重新获取(${this.sendIndex}s)`
+			},
+			sendVerifyStatus() {
+				return this.sendIndex == 60 && this.registerForm.username != ''
+			},
+			toRegisterStatus() {
+				return this.registerForm.username && this.registerForm.verify && this.registerForm.password && this.registerForm.password2
+			},
+			toLoginStatus() {
+				if (this.loginType == 'pwd') {
+					return this.pwdLoginForm.username && this.pwdLoginForm.password
+				} else {
+					return this.verifyLoginForm.username && this.verifyLoginForm.verify
+				}
+			}
+		}
 	}
 </script>
 
@@ -177,7 +301,7 @@
 	.wrapper {
 		position: relative;
 		z-index: 90;
-		height: 820rpx;
+		min-height: 820rpx;
 		background: #fff;
 		padding-bottom: 40upx;
 	}
@@ -250,6 +374,18 @@
 
 	.input-content {
 		padding: 0 60upx;
+
+
+		.login-type-container {
+			padding: 0rpx 20rpx;
+			color: grey;
+
+			.forget-section {
+				font-size: $font-sm+2upx;
+				color: $font-color-spec;
+				text-align: center;
+			}
+		}
 	}
 
 	.input-item {
@@ -263,9 +399,14 @@
 		border-radius: 4px;
 		margin-bottom: 50upx;
 
-		&:last-child {
-			margin-bottom: 0;
+		.send-verify-container {
+			width: 200rpx;
+			white-space: nowrap;
+			margin-left: auto;
+			padding: 0 20rpx;
+			line-height: 60rpx;
 		}
+
 
 		.tit {
 			height: 50upx;
@@ -288,7 +429,7 @@
 		line-height: 76upx;
 		border-radius: 50px;
 		margin: 0 auto;
-		margin-top: 70upx;
+		margin-top: 40upx;
 		background: $uni-color-primary;
 		color: #fff;
 		font-size: $font-lg;
@@ -296,13 +437,6 @@
 		&:after {
 			border-radius: 100px;
 		}
-	}
-
-	.forget-section {
-		font-size: $font-sm+2upx;
-		color: $font-color-spec;
-		text-align: center;
-		margin-top: 40upx;
 	}
 
 	.register-section {
@@ -357,6 +491,11 @@
 				;
 			}
 		}
+	}
+
+
+	.register-container {
+		padding-top: 160rpx;
 	}
 
 	.login-footer {

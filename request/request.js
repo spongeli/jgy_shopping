@@ -23,3 +23,14 @@ Vue.prototype.$post = function(url, data) {
 		}
 	})
 }
+
+Vue.prototype.$common_get = function(url, data) {
+	// 返回一个Promise
+	return uni.request({
+		url: this.$const.COMMON_SERVER_URL + url,
+		data: data,
+		header: {
+			"token": uni.getStorageSync('token')
+		}
+	})
+}

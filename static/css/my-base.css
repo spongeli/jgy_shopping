@@ -147,4 +147,5 @@ uni-textarea{
 
 .noclick {
 	pointer-events: none !important;
+	opacity: 0.6;
 }
