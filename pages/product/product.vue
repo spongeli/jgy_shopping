@@ -112,7 +112,7 @@
 				<text class="yticon icon-gouwuche"></text>
 				<text>购物车</text>
 			</navigator>
-<!-- 			<view class="p-b-btn" :class="{active: favorite}" @click="toFavorite">
+			<!-- 			<view class="p-b-btn" :class="{active: favorite}" @click="toFavorite">
 				<text class="yticon icon-shoucang"></text>
 				<text>收藏</text>
 			</view>
@@ -188,6 +188,9 @@
 			this.gainGoodDetail(options.id);
 
 			this.shareList = await this.$api.json('shareList');
+			
+			// 保存浏览历史
+			this.saveScanGoods();
 		},
 		methods: {
 			zhImgDetail(val) {
@@ -273,10 +276,34 @@
 			},
 			stopPrevent() {},
 			// 加入购物车
-			addCard(){
-				this.$post(`/card/add`,{
-					goodsId:this.productDetail.goodsId,
-					number:1
+			addCard() {
+				console.log(this.$store.state.hasLogin);
+				if (!this.$store.state.hasLogin) {
+					uni.showModal({
+						title: '提示',
+						content: '还没登陆呢，快去登录~',
+						success: function(res) {
+							if (res.confirm) {
+								uni.navigateTo({
+									url: `/pages/public/login`
+								})
+							} else if (res.cancel) {
+
+							}
+						}
+					});
+					return;
+				}
+
+				let selectStyle = '';
+				this.selectedCates.forEach(item => {
+					selectStyle += item.attrName + " "
+				})
+
+				this.$post(`/card/add`, {
+					goodsId: this.productDetail.goodsId,
+					number: 1,
+					selectStyle: selectStyle
 				}).then(res => {
 					if (res[0]) {
 						this.$util.showFail("服务器异常")
@@ -288,6 +315,12 @@
 						}
 					}
 				})
+			},
+			saveScanGoods(){
+				if(!this.$store.state.hasLogin){
+					// 记录用户浏览历史
+					this.$store.commit(`submitScanGoods`,this.productDetail.goodsId)
+				}
 			}
 		},
 		computed: {

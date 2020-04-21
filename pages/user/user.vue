@@ -5,7 +5,7 @@
 			<image class="bg" src="/static/user-bg.jpg"></image>
 			<view class="user-info-box">
 				<view class="portrait-box">
-					<image class="portrait" :src="userInfo.portrait || '/static/missing-face.png'"></image>
+					<image class="portrait" :src="userInfo.userpic || '/static/missing-face.png'"></image>
 				</view>
 				<view class="info-box">
 					<text class="username">{{userInfo.nickname || '游客'}}</text>

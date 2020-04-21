@@ -150,8 +150,8 @@
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;
-		width:230upx;
-		height: 70upx;
+		width: 210upx;
+		height: 60upx;
 		background:#f5f5f5;
 	}
 
@@ -159,9 +159,9 @@
 	.uni-numbox-plus {
 		margin: 0;
 		background-color: #f5f5f5;
-		width: 70upx;
+		width: 60upx;
 		height: 100%;
-		line-height: 70upx;
+		line-height: 60upx;
 		text-align: center;
 		position: relative;
 	}
@@ -186,7 +186,7 @@
 	.uni-numbox-value {
 		position: relative;
 		background-color: #f5f5f5;
-		width: 90upx;
+		width: 80upx;
 		height: 50upx;
 		text-align: center;
 		padding: 0;

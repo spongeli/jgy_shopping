@@ -24,21 +24,21 @@
 		<view v-else>
 			<!-- 列表 -->
 			<view class="cart-list">
-				<block v-for="(item, index) in cartList" :key="item.id">
-					<view class="cart-item" :class="{ 'b-b': index !== cartList.length - 1 }">
+				<block v-for="(item, index) in cartList" :key="index">
+					<view class="cart-item b-b">
 						<view class="image-wrapper">
-							<image :src="item.image" :class="[item.loaded]" mode="aspectFill" lazy-load @load="onImageLoad('cartList', index)"
-							 @error="onImageError('cartList', index)"></image>
-							<view class="yticon icon-xuanzhong2 checkbox" :class="{ checked: item.checked }" @click="check('item', index)"></view>
+							<image style="opacity: 1;" :src="getHeaderImgUrl(item.goodsHeaderImg)" mode="aspectFill" lazy-load @load="onImageLoad('cartList', index)"
+							 @error="onImageError('cartList', index)" @click="toPublicDetail(item)"></image>
+							<view class="yticon icon-xuanzhong2 checkbox" :class="{checked: item.checked}" @click="check('item', index)"></view>
 						</view>
 						<view class="item-right">
-							<text class="clamp title">{{ item.title }}</text>
-							<text class="attr">{{ item.attr_val }}</text>
-							<text class="price">¥{{ item.price }}</text>
-							<uni-number-box class="step" :min="1" :max="item.stock" :value="item.number > item.stock ? item.stock : item.number"
-							 :isMax="item.number >= item.stock ? true : false" :isMin="item.number === 1" :index="index" @eventChange="numberChange"></uni-number-box>
+							<text class="clamp title">{{ item.goodsName }}</text>
+							<text class="attr">{{ item.selectStyle }}</text>
+							<text class="price" style="color: #fa436a;">¥{{ item.goodsPrice }}</text>
+							<uni-number-box class="step" :min="1" :max="item.goodsCount" :value="item.number > item.goodsCount ? item.goodsCount : item.number"
+							 :isMax="item.number >= item.goodsCount ? true : false" :isMin="item.number === 1" :index="index" @eventChange="numberChange"></uni-number-box>
 						</view>
-						<text class="del-btn yticon icon-fork" @click="deleteCartItem(index)"></text>
+						<text class="del-btn yticon icon-fork" @click="deleteCartItem(index,item.cardId)"></text>
 					</view>
 				</block>
 			</view>
@@ -46,15 +46,14 @@
 			<view class="action-section">
 				<view class="checkbox">
 					<image :src="allChecked ? '/static/selected.png' : '/static/select.png'" mode="aspectFit" @click="check('all')"></image>
-					<view class="clear-btn" :class="{ show: allChecked }" @click="clearCart">清空</view>
 				</view>
 				<view class="total-box">
-					<text class="price">¥{{ total }}</text>
-					<text class="coupon">
+					<text class="price">合计： ¥{{ total }}</text>
+					<!-- 					<text class="coupon">
 						已优惠
 						<text>74.35</text>
 						元
-					</text>
+					</text> -->
 				</view>
 				<button type="primary" class="no-border confirm-btn" @click="createOrder">去结算</button>
 			</view>
@@ -63,9 +62,6 @@
 </template>
 
 <script>
-	import {
-		mapState
-	} from 'vuex';
 	import uniNumberBox from '@/components/uni-number-box.vue';
 	import uniPopup from "@/components/uni-app/uni-popup/uni-popup.vue"
 	export default {
@@ -75,17 +71,22 @@
 		},
 		data() {
 			return {
+				isLastPage: false,
+				pageInfo: {
+					pageSize: 10,
+					pageCurrentPage: 1
+				},
+
 				total: 0, //总价格
 				allChecked: false, //全选状态  true|false
 				empty: false, //空白页现实  true|false
 				cartList: []
 			};
 		},
-		onLoad() {
-			this.loadData();
-
-
-
+		onShow() {
+			this.pageInfo.pageCurrentPage = 1
+			this.isLastPage = false;
+			this.innitCardList(true);
 		},
 		watch: {
 			//显示空白页
@@ -97,11 +98,31 @@
 			}
 		},
 		computed: {
-			hasLogin(){
+			hasLogin() {
 				return this.$store.state.hasLogin
 			}
 		},
 		methods: {
+			innitCardList(first) {
+				this.$post(`/card/list`, this.pageInfo).then(res => {
+					if (res[1]) {
+						let resData = res[1].data
+						console.log(resData);
+						if (resData.status == 200) {
+							this.isLastPage = resData.data.isLastPage
+							this.pageInfo.pageCurrentPage = resData.data.pageNum + 1
+							if (first) {
+								this.cartList = resData.data.list
+							} else {
+								this.cartList.push(...resData.data.list)
+							}
+						}
+					} else {
+						this.$util.showFail("服务器异常");
+					}
+				})
+			},
+
 			login() {
 				uni.login({
 					provider: 'weixin',
@@ -111,22 +132,14 @@
 							token: loginRes.code
 						}).then(res => {
 							if (res[1]) {
-								this.$store.commit("submitToken", res[1])
+								debugger
+								this.$store.commit("submitToken", res[1].data)
 							} else {
-								uni.showToast({
-									title: "服务器异常",
-									icon: "none"
-								})
+								this.$util.showFail(`服务器异常`)
 							}
 						})
 					}
 				});
-			},
-			change(val) {
-				console.log(val);
-			},
-			authPopupClick() {
-				this.$refs.authPopup.open();
 			},
 			wxGetUserInfo(val) {
 				// 获取用户信息
@@ -142,36 +155,15 @@
 							if (res[1]) {
 								let resData = res[1].data
 								console.log(resData);
-								if(resData.status == 200){
-									this.$store.commit(`login`,resData.data)
+								if (resData.status == 200) {
+									this.$store.commit(`login`, resData.data)
 								}
 							} else {
-								uni.showToast({
-									title: "服务器异常",
-									icon: "none"
-								})
+								this.$util.showFail(`服务器异常`)
 							}
 						})
 					}
 				});
-			},
-			//请求数据
-			async loadData() {
-				let list = await this.$api.json('cartList');
-				let cartList = list.map(item => {
-					item.checked = true;
-					return item;
-				});
-				this.cartList = cartList;
-				this.calcTotal(); //计算总价
-			},
-			//监听image加载完成
-			onImageLoad(key, index) {
-				this.$set(this[key][index], 'loaded', 'loaded');
-			},
-			//监听image加载失败
-			onImageError(key, index) {
-				this[key][index].image = '/static/errorImage.jpg';
 			},
 			navToLogin() {
 				uni.navigateTo({
@@ -194,29 +186,38 @@
 			},
 			//数量
 			numberChange(data) {
+				console.log(data);
 				this.cartList[data.index].number = data.number;
+				this.$get(`/card/update/${this.cartList[data.index].cardId}`, {
+					number: data.number
+				}).then(res => {
+					if (res[1]) {
+						let resData = res[1].data
+					} else {
+						this.$util.showFail("服务器异常");
+					}
+				})
 				this.calcTotal();
 			},
 			//删除
-			deleteCartItem(index) {
-				let list = this.cartList;
-				let row = list[index];
-				let id = row.id;
-
-				this.cartList.splice(index, 1);
-				this.calcTotal();
-				uni.hideLoading();
-			},
-			//清空
-			clearCart() {
+			deleteCartItem(index, cardId) {
 				uni.showModal({
-					content: '清空购物车？',
+					content: '从购物车里删除该商品?',
 					success: e => {
 						if (e.confirm) {
-							this.cartList = [];
+							this.$post(`/card/delete/${cardId}`).then(res => {
+								if (res[1]) {
+									let resData = res[1].data
+									this.cartList.splice(index, 1);
+									this.calcTotal();
+									uni.hideLoading();
+								} else {
+									this.$util.showFail("服务器异常");
+								}
+							})
 						}
 					}
-				});
+				})
 			},
 			//计算总价
 			calcTotal() {
@@ -229,13 +230,21 @@
 				let checked = true;
 				list.forEach(item => {
 					if (item.checked === true) {
-						total += item.price * item.number;
+						total += item.goodsPrice * item.number;
 					} else if (checked === true) {
 						checked = false;
 					}
 				});
 				this.allChecked = checked;
 				this.total = Number(total.toFixed(2));
+			},
+			//监听image加载完成
+			onImageLoad(key, index) {
+				this.$set(this[key][index], 'loaded', 'loaded');
+			},
+			//监听image加载失败
+			onImageError(key, index) {
+				this[key][index].goodsHeaderImg = '/static/errorImage.jpg';
 			},
 			//创建订单
 			createOrder() {
@@ -255,7 +264,23 @@
 					goodsData: goodsData
 				})}`
 				});
-				this.$api.msg('跳转下一页 sendData');
+			},
+			getHeaderImgUrl(item) {
+				if (item.indexOf(",") > 1) {
+					return item.split(',')[0]
+				}
+				return item
+			},
+			toPublicDetail(item) {
+				console.log(item);
+				uni.navigateTo({
+					url: `/pages/product/product?id=${item.goodId}`
+				})
+			}
+		},
+		onReachBottom() {
+			if (!this.isLastPage) {
+				this.innitCardList()
 			}
 		}
 	};
@@ -305,8 +330,8 @@
 		padding: 30upx 40upx;
 
 		.image-wrapper {
-			width: 230upx;
-			height: 230upx;
+			width: 180upx;
+			height: 180upx;
 			flex-shrink: 0;
 			position: relative;
 
@@ -347,13 +372,14 @@
 			.attr {
 				font-size: $font-sm + 2upx;
 				color: $font-color-light;
-				height: 50upx;
-				line-height: 50upx;
+				height: 30upx;
+				margin: 8rpx 0;
+				line-height: 30upx;
 			}
 
 			.price {
-				height: 50upx;
-				line-height: 50upx;
+				height: 30upx;
+				line-height: 30upx;
 			}
 		}
 
